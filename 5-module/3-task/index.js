@@ -16,18 +16,18 @@ function initCarousel() {
 }
 
 function clickLeft() {
-  offset -= carousel.clientWidth;
-  carousel.style.transform = `translateX(${offset}px)`;
-  visibleButton();
-}
-
-function clickRight() {
   offset += carousel.clientWidth;
   carousel.style.transform = `translateX(${offset}px)`;
   visibleButton();
 }
 
+function clickRight() {
+  offset -= carousel.clientWidth;
+  carousel.style.transform = `translateX(${offset}px)`;
+  visibleButton();
+}
+
 function visibleButton() {
-  btRight.style.display =  offset === 0 ? 'none' : '';
-  btLeft.style.display =  offset === -carousel.clientWidth * 3 ? 'none' : '';
+  btLeft.style.display =  offset === 0 ? 'none' : '';
+  btRight.style.display =  offset === -carousel.clientWidth * 3 ? 'none' : '';
 }
