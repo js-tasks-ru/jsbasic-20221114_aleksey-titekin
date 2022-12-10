@@ -1,33 +1,39 @@
-let carousel;
-let offset = 0;
-let btLeft; 
-let btRight;
+let step_offset;
+let size_offset;
 
 function initCarousel() {
-  btLeft = document.querySelector('.carousel__arrow_left');
-  btRight = document.querySelector('.carousel__arrow_right');
+  step_offset = 0;
+  size_offset = document.querySelector(".carousel__img").width;
 
-  btLeft.addEventListener('click', clickLeft);
-  btRight.addEventListener('click', clickRight);
+  let btLeft = document.querySelector(".carousel__arrow_left");
+  btLeft.addEventListener("click", clickLeft);
+  btLeft.style.display = "none";
 
-  carousel = document.querySelector('.carousel__inner');
+  let btRight = document.querySelector(".carousel__arrow_right");
+  btRight.addEventListener("click", clickRight);
 
-  visibleButton();
+  //let carousel = document.querySelector(".carousel__inner");
+  //carousel.addEventListener("transitionend", visibleButton);
 }
 
 function clickLeft() {
-  offset += carousel.clientWidth;
-  carousel.style.transform = `translateX(${offset}px)`;
+  step_offset++;
   visibleButton();
+  let carousel = document.querySelector(".carousel__inner");
+  carousel.style.transform = `translateX(${step_offset*size_offset}px)`;
 }
 
 function clickRight() {
-  offset -= carousel.clientWidth;
-  carousel.style.transform = `translateX(${offset}px)`;
+  step_offset--;
   visibleButton();
+  let carousel = document.querySelector(".carousel__inner");
+  carousel.style.transform = `translateX(${step_offset*size_offset}px)`;
+
 }
 
 function visibleButton() {
-  btLeft.style.display =  offset === 0 ? 'none' : '';
-  btRight.style.display =  offset === -carousel.clientWidth * 3 ? 'none' : '';
+  let btRight = document.querySelector(".carousel__arrow_right");
+  let btLeft = document.querySelector(".carousel__arrow_left");
+  btRight.style.display = step_offset > -3 ? "" : "none";
+  btLeft.style.display = step_offset < 0 ? "" : "none";
 }
