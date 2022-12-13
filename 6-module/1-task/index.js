@@ -23,16 +23,16 @@ export default class UserTable {
 
   #createTable() {
     this.#elem = document.createElement("table");
-    this.#elem.insertAdjacentHTML("afterbegin", this.#drawTable());
+    this.#elem.insertAdjacentHTML("afterbegin", this.#templateTable());
 
-    for (let btn of this.#elem.querySelectorAll('button')) {
-      btn.addEventListener('click', (event) => {
-        this.#removeRecord(event)
+    for (let btn of this.#elem.querySelectorAll("button")) {
+      btn.addEventListener("click", (event) => {
+        this.#onRemoveRecord(event);
       });
     }
   }
 
-  #drawTable() {
+  #templateTable() {
     return `
       <thead>
         <tr>
@@ -42,8 +42,8 @@ export default class UserTable {
             <th>Город</th>
             <th></th>
         </tr>
-    </thead>
-    <tbody>        
+      </thead>
+      <tbody>        
             ${this.#rows
               .map((item, index) => {
                 return ` <tr>
@@ -54,7 +54,7 @@ export default class UserTable {
                   <td><button data-item-id = ${index} >X</button></td>
                   </tr>`;
               })
-              .join('')}
+              .join("")}
       </tbody>`;
   }
 
@@ -62,8 +62,8 @@ export default class UserTable {
     return this.#elem;
   }
 
-  #removeRecord(event) {
-    let row = event.target.closest('tr');
+  #onRemoveRecord(event) {
+    let row = event.target.closest("tr");
     row.remove();
     /*
     let itemId = event.target.dataset.itemId;
@@ -74,5 +74,3 @@ export default class UserTable {
     */
   }
 }
-
-
