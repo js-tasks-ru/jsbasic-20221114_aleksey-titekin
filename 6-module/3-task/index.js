@@ -27,7 +27,9 @@ export default class Carousel {
         createElement(
           `
           <div class="carousel__slide" data-id="${slide.id}">
-            <img src="/assets/images/carousel/${slide.image}" class="carousel__img" alt="slide">
+            <img src="/assets/images/carousel/${
+              slide.image
+            }" class="carousel__img" alt="slide">
             <div class="carousel__caption">
               <span class="carousel__price">€${slide.price.toFixed(2)}</span>
               <div class="carousel__title">${slide.name}</div>
@@ -59,9 +61,7 @@ export default class Carousel {
 
     let btPlus = this.#root.querySelectorAll(".carousel__button");
     for (let btn of btPlus) {
-      btn.addEventListener("click", (event) => {
-        this.#onClickCardButton(event);
-      });
+      btn.addEventListener("click", this.#onClickCardButton);
     }
   }
 
@@ -77,19 +77,21 @@ export default class Carousel {
 
     let btRight = this.#root.querySelector(".carousel__arrow_right");
     let btLeft = this.#root.querySelector(".carousel__arrow_left");
-    btRight.style.display = step_offset > -(this.#slides.length - 1)  ? "" : "none";
+    btRight.style.display =
+      step_offset > -(this.#slides.length - 1) ? "" : "none";
     btLeft.style.display = step_offset < 0 ? "" : "none";
 
     carousel.style.transform = `translateX(${step_offset * size_offset}px)`;
     carousel.dataset.stepOffset = step_offset;
   }
 
-  #onClickCardButton(event) {
+  #onClickCardButton = (event) => {
+    console.log(event.target.closest(".carousel__slide").dataset.id);
     event.target.dispatchEvent(
       new CustomEvent("product-add", {
         detail: event.target.closest(".carousel__slide").dataset.id,
         bubbles: true,
       })
     );
-  }
+  };
 }

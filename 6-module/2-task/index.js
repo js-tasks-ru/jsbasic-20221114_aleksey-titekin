@@ -29,9 +29,12 @@ export default class ProductCard {
     );
 
     let btn = elem.querySelector("button");
+    btn.addEventListener("click", this.#onClickCardButton);
+    /*
     btn.addEventListener("click", (event) => {
       this.#onClickCardButton(event);
     });
+    */
     return elem;
   }
 
@@ -39,6 +42,15 @@ export default class ProductCard {
     return this.#elem;
   }
 
+  #onClickCardButton = (event) => {
+    event.target.dispatchEvent(
+      new CustomEvent("product-add", {
+        detail: this.#product.id,
+        bubbles: true,
+      })
+    );
+  };
+  /*
   #onClickCardButton(event) {
     event.target.dispatchEvent(
       new CustomEvent("product-add", {
@@ -47,4 +59,5 @@ export default class ProductCard {
       })
     );
   }
+  */
 }
