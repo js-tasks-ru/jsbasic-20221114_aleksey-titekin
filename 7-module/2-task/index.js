@@ -2,21 +2,12 @@ import createElement from "../../assets/lib/create-element.js";
 
 export default class Modal {
   #root = null;
-  //#closeButton;
+
   constructor() {
     this.#root = this.#render();
 
-    document.addEventListener("keyup", this.#onClose,{once: true});
+    document.body.addEventListener("keydown", this.#onClose);
 
-    /*
-    document.addEventListener(
-      "keyup",
-      (event) => {
-        if (event.code === "Escape") this.close();
-      },
-      { once: true }
-    );
-    */
   }
 
   setTitle(value) {
@@ -53,34 +44,33 @@ export default class Modal {
       </div>
 
     </div>`);
-/*
-    this.#closeButton =  elem.querySelector(".modal__close");
-    this.#closeButton.addEventListener("click", this.#onClose);
-*/
-    
+
     elem
       .querySelector(".modal__close")
       .addEventListener("click", this.#onClose);
-    
 
     return elem;
   }
 
   open() {
-    document.body.append(this.#root);
     document.body.classList.add("is-modal-open");
+    document.body.append(this.#root);
   }
 
   close() {
+    document.body.classList.remove("is-modal-open");
     this.#root.remove();
-    document.body.classList.remove("is-modal-open"); 
-
-    //this.#onClose(new MouseEvent('click', { bubbles: true }));
-    //this.#closeButton.dispatchEvent(new MouseEvent('click', { bubbles: true }))
   }
 
   #onClose = (event) => {
-    if (event.code === "Escape") this.close();
-    //this.close();
+    if (event.type === "click") {
+      this.close();
+      return;
+    }
+    if (event.code === "Escape") {
+      document.body.removeEventListener("keydown", this.#onClose);
+      this.close();
+      return;
+    }
   };
 }
