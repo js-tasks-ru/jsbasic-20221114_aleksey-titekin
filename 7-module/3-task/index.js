@@ -15,26 +15,21 @@ export default class StepSlider {
       `  
       <div class="slider">
         <!--Ползунок слайдера с активным значением-->
-        <div class="slider__thumb" style="left: 50%;">
-          <span class="slider__value">2</span>
+        <div class="slider__thumb">
+          <span class="slider__value"></span>
         </div>
 
         <!--Заполненная часть слайдера-->
-        <div class="slider__progress" style="width: 50%;"></div>
+        <div class="slider__progress"></div>
 
         <!--Шаги слайдера-->
-        <div class="slider__steps">
-        </div>
+        <div class="slider__steps"></div>
       </div>`
     );
 
     let steps = node.querySelector(".slider__steps");
     for (let i = 0; i < this.#config.steps; i++) {
-      let span = document.createElement("span");
-      if (i == 2) {
-        span.classList.add("slider__step-active");
-      }
-      steps.append(span);
+      steps.append(document.createElement("span"));
     }
 
     node.addEventListener("click", this.#onClick);
@@ -65,7 +60,7 @@ export default class StepSlider {
     this.#root.querySelector(".slider__value").textContent = this.#config.value;
 
     let span = this.#root.querySelector(".slider__step-active");
-    span.classList.remove("slider__step-active");
+    if (span) span.classList.remove("slider__step-active");
 
     span = this.#root.querySelector(".slider__steps").firstElementChild;
     for (let i = 1; i <= this.#config.value; i++) {
