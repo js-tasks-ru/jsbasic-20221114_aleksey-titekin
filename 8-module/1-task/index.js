@@ -44,6 +44,40 @@ export default class CartIcon {
   }
 
   updatePosition() {
-    // ваш код ...
+    if (
+      this.elem.offsetHeight == 0 ||
+      document.documentElement.clientWidth <= 767
+    ) {
+      return;
+    }
+
+    let rectCart = this.elem.getBoundingClientRect();
+
+    if (window.pageYOffset == 0) {
+      this.elem.style = "";
+      return;
+    }
+
+    //document.body.querySelector(".products-grid").getBoundingClientRect().right -
+
+    let rightCard =
+      document.documentElement.clientWidth -
+      document.body.querySelector(".container").getBoundingClientRect().right -      
+      this.elem.clientWidth -
+      20;
+      
+    if (rightCard < 10) rightCard = 10;
+
+    this.elem.style.position = "fixed";
+    this.elem.style.zIndex = "999";
+    this.elem.style.right = rightCard + "px";
+    this.elem.style.top = "50px";
+
+    /*
+    let actualLeftIndent = Math.round(this.elem.getBoundingClientRect().left);
+    let expectedLeftIndent = document.documentElement.clientWidth - this.elem.offsetWidth - 10;
+
+    console.log(actualLeftIndent, expectedLeftIndent);
+*/
   }
 }
