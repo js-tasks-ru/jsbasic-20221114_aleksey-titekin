@@ -51,33 +51,25 @@ export default class CartIcon {
       return;
     }
 
-    let rectCart = this.elem.getBoundingClientRect();
-
     if (window.pageYOffset == 0) {
       this.elem.style = "";
       return;
     }
 
-    //document.body.querySelector(".products-grid").getBoundingClientRect().right -
-
-    let rightCard =
+    let scrollWidth =
+      document.documentElement.offsetWidth -
+      document.documentElement.clientWidth;
+    let rightSize =
       document.documentElement.clientWidth -
-      document.body.querySelector(".container").getBoundingClientRect().right -      
+      document.body.querySelector(".container").getBoundingClientRect().right -
       this.elem.clientWidth -
       20;
-      
-    if (rightCard < 10) rightCard = 10;
+
+    if (rightSize < 10) rightSize = 10 + scrollWidth;
 
     this.elem.style.position = "fixed";
     this.elem.style.zIndex = "999";
-    this.elem.style.right = rightCard + "px";
+    this.elem.style.right = rightSize + "px";
     this.elem.style.top = "50px";
-
-    /*
-    let actualLeftIndent = Math.round(this.elem.getBoundingClientRect().left);
-    let expectedLeftIndent = document.documentElement.clientWidth - this.elem.offsetWidth - 10;
-
-    console.log(actualLeftIndent, expectedLeftIndent);
-*/
   }
 }
