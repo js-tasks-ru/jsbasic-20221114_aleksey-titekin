@@ -119,12 +119,23 @@ export default class Cart {
       .map((item) => this.renderProduct(item.product, item.count))
       .forEach((item) => {
         item.addEventListener("click", (event) => {
+          if (event.target.closest(".cart-counter__button_minus")) {
+            this.updateProductCount(item.dataset.productId, -1)
+            return;
+          }
+          if (event.target.closest(".cart-counter__button_plus")) {
+            this.updateProductCount(item.dataset.productId, 1)
+            return;
+          }
+
+          /*
           if (event.target.closest("button")) {
             this.updateProductCount(
               item.dataset.productId,
               event.target.alt == "plus" ? 1 : -1
             );
           }
+          */
         });
         this.#modalBody.append(item);
       });
