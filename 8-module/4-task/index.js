@@ -5,6 +5,7 @@ import Modal from "../../7-module/2-task/index.js";
 
 export default class Cart {
   cartItems = []; // [product: {...}, count: N]
+  #modal;
   #modalBody;
   constructor(cartIcon) {
     this.cartIcon = cartIcon;
@@ -16,7 +17,7 @@ export default class Cart {
     if (!product) return;
 
     let item;
-    item = this.cartItems.find((item) => item.product.id === product.id);
+    item = this.cartItems.find(item => item.product.id === product.id);
     if (item) {
       this.updateProductCount(product.id, 1);
       return;
@@ -32,7 +33,7 @@ export default class Cart {
 
   updateProductCount(productId, amount) {
     let index = this.cartItems.findIndex(
-      (item) => item.product.id === productId
+      item => item.product.id === productId
     );
     let item = this.cartItems[index];
 
@@ -79,7 +80,9 @@ export default class Cart {
               <img src="/assets/images/icons/square-plus-icon.svg" alt="plus">
             </button>
           </div>
-          <div class="cart-product__price">€${(count * product.price).toFixed(2)}</div>
+          <div class="cart-product__price">€${(count * product.price).toFixed(
+            2
+          )}</div>
         </div>
       </div>
     </div>`);
@@ -100,7 +103,9 @@ export default class Cart {
         <div class="cart-buttons__buttons btn-group">
           <div class="cart-buttons__info">
             <span class="cart-buttons__info-text">total</span>
-            <span class="cart-buttons__info-price">€${this.getTotalPrice().toFixed(2)}</span>
+            <span class="cart-buttons__info-price">€${this.getTotalPrice().toFixed(
+              2
+            )}</span>
           </div>
           <button type="submit" class="cart-buttons__button btn-group__button button">order</button>
         </div>
@@ -109,7 +114,7 @@ export default class Cart {
   }
 
   renderModal() {
-    let body = createElement("<div></div>");
+    this.#modalBody = createElement("<div></div>");
     this.cartItems
       .map((item) => this.renderProduct(item.product, item.count))
       .forEach((item) => {
@@ -121,95 +126,89 @@ export default class Cart {
             );
           }
         });
-        body.append(item);
+        this.#modalBody.append(item);
       });
 
     let submit = this.renderOrderForm();
     submit.addEventListener("submit", (event) => this.onSubmit(event));
-    body.append(submit);
+    this.#modalBody.append(submit);
 
-    this.#modalBody = body;
+    this.#modal = new Modal();
+    this.#modal.setTitle("Your order");
+    this.#modal.setBody(this.#modalBody);
 
-    let modal = new Modal();
-    modal.setTitle("Your order");
-    modal.setBody(body);
-
-    modal.open();
+    this.#modal.open();
   }
 
   onProductUpdate(cartItem) {
     this.cartIcon.update(this);
 
     if (!document.body.classList.contains("is-modal-open")) return;
-
+    
     if (this.getTotalCount() == 0) {
-      document.body
+      document
         .querySelector(".modal__close")
-        .dispatchEvent(new Event("click", { bubbles: true }));
+        .click();
+      //  .dispatchEvent(new MouseEvent("click", { bubbles: true }));
       return;
     }
 
-    this.#modalBody.querySelector(`.cart-buttons__info-price`).innerHTML =
+    this.#modalBody.querySelector('.cart-buttons__info-price').innerHTML =
       "€" + this.getTotalPrice().toFixed(2);
 
     let elem = this.#modalBody.querySelector(
       `[data-product-id="${cartItem.product.id}"]`
     );
 
-    if (cartItem.count == 0) {
+    if (cartItem.count === 0) {
       elem.remove();
       return;
     }
 
-    elem.querySelector(`.cart-counter__count`).innerHTML = cartItem.count;
+    elem.querySelector('.cart-counter__count').innerHTML = String(cartItem.count);
 
-    elem.querySelector(`.cart-product__price`).innerHTML =
-      "€" + (cartItem.count * cartItem.product.price).toFixed(2);
-
-    /*
-    let productCount = this.#modalBody.querySelector(`[data-product-id="${cartItem.product.id}"] .cart-counter__count`); 
-    productCount.innerHTML = cartItem.count;    
-
-    let productPrice = this.#modalBody.querySelector(`[data-product-id="${cartItem.product.id}"] .cart-product__price`); 
-    productPrice.innerHTML = '€' + (cartItem.count * cartItem.product.price).toFixed(2);
-
-    let infoPrice = this.#modalBody.querySelector(`.cart-buttons__info-price`); 
-    infoPrice.innerHTML = '€' + this.getTotalPrice().toFixed(2);
-*/
+    elem.querySelector('.cart-product__price').innerHTML =
+      "€" + String((cartItem.count * cartItem.product.price).toFixed(2));
   }
 
   onSubmit(event) {
-    // ...ваш код
     event.preventDefault();
 
-    this.#modalBody.querySelector('button[type="submit"]').classList.add('.is-loading');
+    this.#modalBody
+      .querySelector('button[type="submit"]')
+      .classList.add('.is-loading');
 
-    let response = fetch('https://httpbin.org/post', {
-      method: 'POST',
-      body: new FormData(this.#modalBody.querySelector('.cart-form'))
+    let promise = fetch("https://httpbin.org/post", {
+      method: "POST",
+      body: new FormData(this.#modalBody.querySelector(".cart-form")),
     });
 
-    //let result = response.json();
-    //console.log(response);
+    promise
+      .then((response) => {
+        response.json().then((data) => console.log(data));
+      })
+      .catch(() => {
+        alert('ALARM!!!')
+      });
 
     //Отчистка корзины
     this.cartItems.length = 0;
     this.cartIcon.update(this);
 
     //Заголовок
-    document.body.querySelector('.modal__title').textContent = 'Success!';
+    this.#modal.setTitle("Success!");
 
     //верстка
-    this.#modalBody.innerHTML = `
+    this.#modal.setBody(
+      createElement(`
     <div class="modal__body-inner">
-    <p>
-      Order successful! Your order is being cooked :) <br>
-      We’ll notify you about delivery time shortly.<br>
-      <img src="/assets/images/delivery.gif">
-    </p>
-  </div>`;
-
-
+      <p>
+        Order successful! Your order is being cooked :) <br>
+        We’ll notify you about delivery time shortly.<br>
+        <img src="/assets/images/delivery.gif">
+      </p>
+    </div>`)
+    );
   }
 
   addEventListeners() {
