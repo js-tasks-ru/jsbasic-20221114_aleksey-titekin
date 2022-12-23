@@ -17,7 +17,7 @@ export default class Cart {
     if (!product) return;
 
     let item;
-    item = this.cartItems.find(arItem => arItem.product.id === product.id);
+    item = this.cartItems.find((arItem) => arItem.product.id === product.id);
     if (item) {
       this.updateProductCount(product.id, 1);
       return;
@@ -33,7 +33,7 @@ export default class Cart {
 
   updateProductCount(productId, amount) {
     let index = this.cartItems.findIndex(
-      arItem => arItem.product.id === productId
+      (arItem) => arItem.product.id === productId
     );
     let item = this.cartItems[index];
 
@@ -119,16 +119,7 @@ export default class Cart {
     this.cartItems
       .map((item) => this.renderProduct(item.product, item.count))
       .forEach((item) => {
-        item.addEventListener("click", (event) => {
-          if (event.target.closest(".cart-counter__button_minus")) {
-            this.updateProductCount(item.dataset.productId, -1)
-            return;
-          }
-          if (event.target.closest(".cart-counter__button_plus")) {
-            this.updateProductCount(item.dataset.productId, 1)
-            return;
-          }
-        });
+        item.addEventListener("click", this.onItemClick);
         this.#modalBody.append(item);
       });
 
@@ -143,20 +134,32 @@ export default class Cart {
     this.#modal.open();
   }
 
+  onItemClick = (event) => {
+    let productId = event.target.closest('.cart-product').dataset.productId;
+
+    if (event.target.closest(".cart-counter__button_minus")) {
+      this.updateProductCount(productId, -1);
+      return;
+    }
+    if (event.target.closest(".cart-counter__button_plus")) {
+      this.updateProductCount(productId, 1);
+      return;
+    }
+  };
+
   onProductUpdate(cartItem) {
     this.cartIcon.update(this);
 
     if (!document.body.classList.contains("is-modal-open")) return;
-    
+
     if (this.getTotalCount() == 0) {
-      document
-        .querySelector(".modal__close")
-        .click();
+      this.#modal.close();
+      //  document.querySelector(".modal__close").click();
       //  .dispatchEvent(new MouseEvent("click", { bubbles: true }));
       return;
     }
 
-    this.#modalBody.querySelector('.cart-buttons__info-price').innerHTML =
+    this.#modalBody.querySelector(".cart-buttons__info-price").innerHTML =
       "€" + this.getTotalPrice().toFixed(2);
 
     let elem = this.#modalBody.querySelector(
@@ -168,9 +171,9 @@ export default class Cart {
       return;
     }
 
-    elem.querySelector('.cart-counter__count').innerHTML = cartItem.count;
+    elem.querySelector(".cart-counter__count").innerHTML = cartItem.count;
 
-    elem.querySelector('.cart-product__price').innerHTML =
+    elem.querySelector(".cart-product__price").innerHTML =
       "€" + (cartItem.count * cartItem.product.price).toFixed(2);
   }
 
@@ -179,20 +182,28 @@ export default class Cart {
 
     this.#modalBody
       .querySelector('button[type="submit"]')
-      .classList.add('.is-loading');
+      .classList.add(".is-loading");
+
+    let formData = new FormData(this.#modalBody.querySelector(".cart-form"));
+    formData.append('cartItems', JSON.stringify(this.cartItems));
 
     let promise = fetch("https://httpbin.org/post", {
       method: "POST",
-      body: new FormData(this.#modalBody.querySelector(".cart-form")),
+      body: formData,
     });
 
     promise
-      .then(response => response.json())
-      .then(result => console.log(result))    
+      .then((response) => {
+        if (response.ok) this.#renderSuccess();
+        return response.json();
+      })
+      .then((result) => console.log(result))
       .catch(() => {
-        alert('ALARM!!!')
+        alert("ALARM!!!");
       });
+  }
 
+  #renderSuccess() {
     //Отчистка корзины
     this.cartItems.length = 0;
     this.cartIcon.update(this);

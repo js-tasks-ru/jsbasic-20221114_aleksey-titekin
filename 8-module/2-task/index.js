@@ -25,9 +25,12 @@ export default class ProductGrid {
   }
 
   updateFilter(filter) {
+    /*
     for (let arg in filter) {
       this.filters[arg] = filter[arg];
     }
+    */
+    Object.assign(this.filters, filter);
     this.#refreshProductCards();
   }
 
