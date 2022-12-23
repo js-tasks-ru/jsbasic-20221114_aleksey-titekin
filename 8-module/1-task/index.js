@@ -45,20 +45,26 @@ export default class CartIcon {
 
   updatePosition() {
     if (
-      this.elem.offsetHeight == 0 ||
-      document.documentElement.clientWidth <= 767
+      this.elem.offsetHeight == 0 || 
+      document.documentElement.clientWidth <= 767 || 
+      window.pageYOffset == 0
     ) {
-      return;
-    }
-
-    if (window.pageYOffset == 0) {
       this.elem.style = "";
       return;
     }
 
+    /*
+    if (window.pageYOffset == 0) {
+      this.elem.style = "";
+      return;
+    }
+    */
+
+
+    /*
     let rightSize =
       document.documentElement.clientWidth -
-      document.body.querySelector(".container").getBoundingClientRect().right -
+      document.querySelector(".container").getBoundingClientRect().right -
       this.elem.clientWidth -
       20;
 
@@ -68,5 +74,17 @@ export default class CartIcon {
     this.elem.style.zIndex = "999";
     this.elem.style.right = rightSize + "px";
     this.elem.style.top = "50px";
+    */
+
+    let leftSize = Math.min(
+      document.querySelector(".container").getBoundingClientRect().right + 20,
+      document.documentElement.clientWidth - this.elem.offsetWidth - 10
+    );
+
+    this.elem.style.position = "fixed";
+    this.elem.style.zIndex = "999";
+    this.elem.style.top = "50px";
+    this.elem.style.right = "10px";
+    this.elem.style.left = leftSize + "px";
   }
 }
