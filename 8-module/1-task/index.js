@@ -56,16 +56,13 @@ export default class CartIcon {
       return;
     }
 
-    let scrollWidth =
-      document.documentElement.offsetWidth -
-      document.documentElement.clientWidth;
     let rightSize =
       document.documentElement.clientWidth -
       document.body.querySelector(".container").getBoundingClientRect().right -
       this.elem.clientWidth -
       20;
 
-    if (rightSize < 10) rightSize = 10 + scrollWidth;
+    if (rightSize < 10) rightSize = 10;
 
     this.elem.style.position = "fixed";
     this.elem.style.zIndex = "999";

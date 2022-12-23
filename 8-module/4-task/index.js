@@ -17,7 +17,7 @@ export default class Cart {
     if (!product) return;
 
     let item;
-    item = this.cartItems.find(item => item.product.id === product.id);
+    item = this.cartItems.find(arItem => arItem.product.id === product.id);
     if (item) {
       this.updateProductCount(product.id, 1);
       return;
@@ -33,13 +33,13 @@ export default class Cart {
 
   updateProductCount(productId, amount) {
     let index = this.cartItems.findIndex(
-      item => item.product.id === productId
+      arItem => arItem.product.id === productId
     );
     let item = this.cartItems[index];
 
     item.count += amount;
 
-    if (item.count == 0) {
+    if (item.count === 0) {
       this.cartItems.splice(index, 1);
     }
 
@@ -89,7 +89,8 @@ export default class Cart {
   }
 
   renderOrderForm() {
-    return createElement(`<form class="cart-form">
+    return createElement(`
+    <form class="cart-form">
       <h5 class="cart-form__title">Delivery</h5>
       <div class="cart-form__group cart-form__group_row">
         <input name="name" type="text" class="cart-form__input" placeholder="Name" required value="Santa Claus">
@@ -127,15 +128,6 @@ export default class Cart {
             this.updateProductCount(item.dataset.productId, 1)
             return;
           }
-
-          /*
-          if (event.target.closest("button")) {
-            this.updateProductCount(
-              item.dataset.productId,
-              event.target.alt == "plus" ? 1 : -1
-            );
-          }
-          */
         });
         this.#modalBody.append(item);
       });
@@ -176,10 +168,10 @@ export default class Cart {
       return;
     }
 
-    elem.querySelector('.cart-counter__count').innerHTML = String(cartItem.count);
+    elem.querySelector('.cart-counter__count').innerHTML = cartItem.count;
 
     elem.querySelector('.cart-product__price').innerHTML =
-      "€" + String((cartItem.count * cartItem.product.price).toFixed(2));
+      "€" + (cartItem.count * cartItem.product.price).toFixed(2);
   }
 
   onSubmit(event) {
@@ -195,9 +187,8 @@ export default class Cart {
     });
 
     promise
-      .then((response) => {
-        response.json().then((data) => console.log(data));
-      })
+      .then(response => response.json())
+      .then(result => console.log(result))    
       .catch(() => {
         alert('ALARM!!!')
       });
@@ -212,13 +203,13 @@ export default class Cart {
     //верстка
     this.#modal.setBody(
       createElement(`
-    <div class="modal__body-inner">
-      <p>
-        Order successful! Your order is being cooked :) <br>
-        We’ll notify you about delivery time shortly.<br>
-        <img src="/assets/images/delivery.gif">
-      </p>
-    </div>`)
+        <div class="modal__body-inner">
+          <p>
+            Order successful! Your order is being cooked :) <br>
+            We’ll notify you about delivery time shortly.<br>
+            <img src="/assets/images/delivery.gif">
+          </p>
+        </div>`)
     );
   }
 
